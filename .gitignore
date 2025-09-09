@@ -5,6 +5,7 @@
 .contentlayer
 .content-collections
 .source
+.obsidian
 
 # test & build
 /coverage
