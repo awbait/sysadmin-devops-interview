@@ -1,45 +1,38 @@
-# sysadmin-devops-interview
+# 📘 Сборник вопросов и ответов для собеседований (SysAdmin / DevOps)
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+Этот проект — **сборник вопросов и кратких ответов**, которые часто встречаются на собеседованиях на позиции **системного администратора** и **DevOps-инженера**.
 
-Run development server:
+Материал оформлен в виде удобной документации, чтобы можно было быстро повторить ключевые темы перед интервью или использовать как справочник.
+
+## 🚀 Темы
+
+На данный момент доступны следующие разделы:
+
+- Ansible
+- CI/CD
+- Databases
+- DevOps
+- Git
+- Kubernetes
+- Linux
+- Networks
+- Python
+- Terraform
+
+📌 В дальнейшем список будет дополняться.
+
+## 🎯 Цель проекта
+
+- Систематизировать знания по ключевым направлениям.
+- Подготовить шпаргалку для повторения перед собеседованием.
+- Сделать удобный справочник для практикующих инженеров.
+
+## 🛠️ Как запустить локально
 
 ```bash
-npm run dev
-# or
-pnpm dev
-# or
-yarn dev
+# Установить зависимости
+bun install
+
+# Запустить dev-сервер
+bun run dev
 ```
-
-Open http://localhost:3000 with your browser to see the result.
-
-## Explore
-
-In the project, you can see:
-
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
-
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
-
-### Fumadocs MDX
-
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
-
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
-
-## Learn More
-
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.vercel.app) - learn about Fumadocs
