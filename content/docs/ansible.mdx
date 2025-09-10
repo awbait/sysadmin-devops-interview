@@ -3,4 +3,40 @@ title: Ansible
 description: Ansible
 ---
 
-# Ansible
+## Ansible
+
+### Как в плейбуке перезаписать дефолтные переменные?
+
+Есть несколько способов, так как у переменных в Ansible разные уровни приоритета:
+- Через extra-vars (CLI, самый высокий приоритет)
+```bash
+ansible-playbook site.yml -e "my_var=cli_value"
+```
+- Через `vars:` в самом плейбуке
+```yaml
+- hosts: all
+  roles:
+    - myrole
+  vars:
+    my_var: "new_value"
+```
+- Через `vars_files`
+```yaml
+- hosts: all
+  roles:
+    - myrole
+  vars_files:
+    - override.yml   # внутри: my_var: "value_from_file"
+```
+- Через `set_fact` (во время выполнения)
+```yaml
+- hosts: all
+  tasks:
+    - set_fact:
+        my_var: "runtime_value"
+```
+- Через `group_vars` или `host_vars` (`group_vars/web.yml`)
+```yaml
+my_var: "from_inventory"
+```
+

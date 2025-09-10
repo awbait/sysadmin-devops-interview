@@ -5,8 +5,8 @@
 	"scripts": {
 		"build": "next build",
 		"sync-content": "bun ./scripts/sync-content.ts",
-		"dev": "bunx serve out",
-		"start": "next start",
+		"dev": "next dev --turbo",
+		"start": "bunx serve out",
 		"postinstall": "fumadocs-mdx"
 	},
 	"dependencies": {

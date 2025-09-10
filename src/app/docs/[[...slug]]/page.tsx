@@ -24,7 +24,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 			<DocsDescription>{page.data.description}</DocsDescription>
 
 			<div className='not-prose my-6'>
-				<InlineTOC items={page.data.toc} />
+				<InlineTOC defaultOpen={true} items={page.data.toc} />
 			</div>
 
 			<DocsBody>
