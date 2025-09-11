@@ -1,0 +1,30 @@
+---
+title: Ресурсы и безопасность
+---
+## Вопросы
+### Можно ли ограничить использование ресурсов (CPU, RAM, IO, Network) для контейнера? Как это реализовано (cgroup)?
+
+Можно. И делается через cgroup. В модуле ядра.
+А можно посмотреть в докере как ключи ставить
+[https://docs.docker.com/config/containers/resource_constraints/](https://docs.docker.com/config/containers/resource_constraints/)
+
+### От кого по умолчанию запускается контейнер? Почему это плохо?
+
+Процесс внутри пользователя запускается от root. id = 0.
+Лучше вот так делать
+```docker
+FROM alpine
+RUN groupadd -r myuser && useradd -r -g myuser
+<Здесь еще можно выполнять команды от root-пользователя, например, ставить пакеты>
+USER myuser
+```
+Можно таким образом нарушить изоляцию и получить рутовый доступ.
+Ну и не все запускают от рута в итоге
+
+### Как убить контейнер изнутри?
+
+Через sigkill нельзя. Нужен обработчик сигнала. Sigkill я зарегистрировать не смогу. И игнорировать этот сигнал тоже. Но можно обрабатывать sigterm. И его использовать для выхода из приложения. [https://medium.com/@andrestc/killing-a-container-from-the-inside-b4923f3a4182](https://medium.com/@andrestc/killing-a-container-from-the-inside-b4923f3a4182)
+
+### Возможен ли самостоятельный перезапуск контейнера?
+
+Да, можно вот так указать: `docker run --restart=always`
