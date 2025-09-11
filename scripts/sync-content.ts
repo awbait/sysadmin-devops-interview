@@ -10,9 +10,7 @@ const filePath = {
 }['next']
 
 async function main() {
-	// private API key
 	const apiKey = process.env.ORAMA_PRIVATE_API_KEY
-	console.log(apiKey)
 
 	if (!apiKey) {
 		console.log('no api key for Orama found, skipping')
