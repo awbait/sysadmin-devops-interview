@@ -1,0 +1,26 @@
+{
+	"title": "Interview Questions",
+	"description": "Interview Questions",
+	"icon": "Brain",
+	"root": true,
+	"pages": [
+		"---Core---",
+		"linux",
+		"networks",
+		"git",
+		"---Containers & Cloud---",
+		"docker",
+		"kubernetes",
+		"---Infrastructure as Code---",
+		"ansible",
+		"terraform",
+		"---Delivery---",
+		"ci-cd",
+		"devops",
+		"---Data & Messaging---",
+		"databases",
+		"rabbitmq",
+		"---Programming---",
+		"python"
+	]
+}
