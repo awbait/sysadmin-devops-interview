@@ -4,6 +4,7 @@
 	"icon": "Brain",
 	"root": true,
 	"pages": [
+		"index",
 		"---Core---",
 		"linux",
 		"networks",
