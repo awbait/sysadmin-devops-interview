@@ -1,5 +1,6 @@
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
+import { getGithubLastEdit } from 'fumadocs-core/server'
 import { InlineTOC } from 'fumadocs-ui/components/inline-toc'
 import { createRelativeLink } from 'fumadocs-ui/mdx'
 import {
@@ -18,8 +19,18 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 
 	const MDXContent = page.data.body
 
+	const time = await getGithubLastEdit({
+		owner: 'awbait',
+		repo: 'sysadmin-devops-interview',
+		path: `content/docs/${page.path}`,
+	})
+
 	return (
-		<DocsPage toc={page.data.toc} full={page.data.full}>
+		<DocsPage
+			toc={page.data.toc}
+			full={page.data.full}
+			lastUpdate={time ?? undefined}
+		>
 			<DocsTitle>{page.data.title}</DocsTitle>
 			<DocsDescription>{page.data.description}</DocsDescription>
 
