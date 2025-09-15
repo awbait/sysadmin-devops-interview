@@ -33,6 +33,14 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 		>
 			<DocsTitle>{page.data.title}</DocsTitle>
 			<DocsDescription>{page.data.description}</DocsDescription>
+			<a
+				href={`https://github.com/awbait/sysadmin-devops-interview/blob/main/content/docs/${page.path}`}
+				rel='noreferrer noopener'
+				target='_blank'
+				className='w-fit border rounded-xl p-2 font-medium text-sm text-fd-secondary-foreground bg-fd-secondary transition-colors hover:text-fd-accent-foreground hover:bg-fd-accent'
+			>
+				Редактировать на GitHub
+			</a>
 
 			<div className='not-prose my-6'>
 				<InlineTOC defaultOpen={true} items={page.data.toc}>
