@@ -30,6 +30,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 			toc={page.data.toc}
 			full={page.data.full}
 			lastUpdate={time ?? undefined}
+			tableOfContent={{ style: 'clerk' }}
 		>
 			<DocsTitle>{page.data.title}</DocsTitle>
 			<DocsDescription>{page.data.description}</DocsDescription>
