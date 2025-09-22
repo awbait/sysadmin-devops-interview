@@ -3,7 +3,7 @@ title: Ansible
 description: Ansible
 icon: SiAnsible
 ---
-## Вопросы
+## Теоретические вопросы
 
 ### Как в плейбуке перезаписать дефолтные переменные?
 
@@ -260,3 +260,111 @@ $ cat prod-playbook.yml
 
 Модули что-то делают на хостах. Модули вызываются в задачах (tasks) плейбука
 Плагины расширяют функционал ансибла
+
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+## Практические вопросы
+
+### Какие зависимости (явные и неявные) используются в этой роли
+
+```files
+rhel_python_sub
+├── meta
+│   ├── argument_specs.yml
+│   └── main.yml
+├── tasks
+│   └── main.yml
+├── vars
+│   ├── el6.yml
+│   └── el7.yml
+└── tests
+    └── antest
+        ├── inventory
+        │   └── hosts.yml
+        └── site.yml
+```
+
+#### Явные зависимости (объявлены напрямую)
+```yaml title="meta/main.yml"
+---
+galaxy_info:
+  role_name: rhel_python_sub
+  description: Locate or install actual Python version on EL6/7
+  // [!code highlight]
+  min_ansible_version: "2.11"
+
+  platforms:
+    - name: EL
+      versions:
+// [!code highlight]
+        - "6"
+// [!code highlight]
+        - "7"
+
+dependencies:
+// [!code highlight]
+  - role: southbridge.aux.repo_southbridge
+...
+```
+
+- Ansible ≥ 2.11
+- Поддерживаемые платформы: EL6 и EL7
+- Роль-зависимость: `southbridge.aux.repo_southbridge`
+
+➜ То есть перед использованием `rhel_python_sub` должна быть применена роль **`southbridge.aux.repo_southbridge`** (вероятно, она подключает нужные репозитории для Python).
+#### Неявные зависимости (следуют из логики роли)
+1. Зависимость от фактов ОС (EL6/EL7) и vars-файлов
+```yaml title="tasks/main.yml"
+- name: OS version-specific vars included
+  include_vars:
+    file: "el{{ ansible_distribution_major_version }}.yml"
+```
+- Роль ожидает корректно собранные факты (`ansible_distribution_major_version`)
+- И наличие соответствующих файлов: `vars/el6.yml`, `vars/el7.yml`.
+2. Зависимость от файловой иерархии/бинарей Python
+```yaml title="tasks/main.yml"
+- name: Python binaries found
+  register: __rhel_python_sub_find
+  find:
+    patterns: "{{ rhel_python_sub__set }}"
+    paths: "{{ rhel_python_sub__paths }}"
+```
+Имена бинарей и пути берутся из `vars/el6.yml` / `vars/el7.yml`.  
+Примеры:
+- `el6.yml`: `rhel_python_sub__paths: [/opt/rh/rh-python36/root/usr/bin, /usr/bin]`, `rhel_python_sub__set: [python3.6, python3.5, python2.7]`
+- `el7.yml`: `rhel_python_sub__paths: [/usr/bin]`, `rhel_python_sub__set: [python3.8, python3.7, python3.6]`
+3. Контракт для других задач/ролей (факт про интерпретатор)
+```yaml title="tasks/main.yml"
+- name: Fact about interpreter path defined from find results
+  when: __rhel_python_sub_find.files|length
+  set_fact:
+    _rhel_python_sub_interpreter: "{{ __rhel_python_sub_find.files|map(attribute='path')|list|first }}"
+```
+- Роль выставляет `_rhel_python_sub_interpreter` — это неявный контракт, что дальше потребители будут его использовать.
+4. Требование повышенных привилегий (в тестах)
+```yaml title="tests/antest/site.yml"
+gather_subset: [ 'min' ]
+become: true
+roles:
+  - southbridge.aux.rhel_python_sub
+```
+- Для установки пакетов нужен `become: true`.
+5. Отсутствие обязательных входных параметров
+```yaml title="meta/argument_specs.yml"
+argument_specs:
+  main:
+    short_description: The main entry point for the rhel_python_sub role.
+    options: {}
+```
+- Все входы — необязательные; роль полагается на факты ОС и свои defaults/vars.
+
+#### Возможные другие места для поиска (в других ролях)
+1. **`meta/main.yml`** — `dependencies`, `platforms`, `min_ansible_version`.
+2. **`galaxy.yml` / `MANIFEST.json`** (в коллекциях) — зависимости коллекций.
+3. **`tasks/**/*.yml`** — используемые модули (`apt/yum/dnf/package/pip`, `get_url`, `command/shell`), отсюда видны системные и сетевые зависимости.
+4. **`defaults/main.yml` и `vars/**`** — какие переменные роль ожидает (обязательные/дефолтные).
+5. **`templates/**` и `files/**`** — конфиги/скрипты, которые намекают на пакеты, пути, сервисы.
+6. **`handlers/main.yml`** — какие сервисы перезапускаются (косвенно — какие пакеты ставятся).
+7. **`molecule/**` и CI (`.github/workflows`, `.gitlab-ci.yml`)** — на каких образах/ОС роль тестируется, какие пакеты докатывают в CI.
+8. **README / CHANGELOG** — нередко прямо перечисляют внешние требования (репозитории, подписки, версии Python и т.п.).
+
