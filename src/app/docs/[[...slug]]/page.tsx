@@ -12,6 +12,47 @@ import {
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
+function CustomLastUpdate({ date }: { date: Date }) {
+	const formatDate = (date: Date) => {
+		const day = date.getDate()
+		const year = date.getFullYear()
+		const hours = date.getHours()
+		const minutes = date.getMinutes()
+		const seconds = date.getSeconds()
+
+		// Массив сокращенных названий месяцев на русском
+		const monthNames = [
+			'янв.',
+			'февр.',
+			'мар.',
+			'апр.',
+			'май',
+			'июн.',
+			'июл.',
+			'авг.',
+			'сент.',
+			'окт.',
+			'нояб.',
+			'дек.',
+		]
+
+		const month = monthNames[date.getMonth()]
+
+		// Форматируем время с секундами
+		const timeString = `${hours.toString().padStart(2, '0')}:${minutes
+			.toString()
+			.padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+
+		return `${day} ${month} ${year} г., ${timeString}`
+	}
+
+	return (
+		<p className='text-sm text-fd-muted-foreground'>
+			Последнее обновление {formatDate(date)}
+		</p>
+	)
+}
+
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 	const params = await props.params
 	const page = source.getPage(params.slug)
@@ -24,12 +65,12 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 		repo: 'sysadmin-devops-interview',
 		path: `content/docs/${page.path}`,
 	})
+	console.log(time)
 
 	return (
 		<DocsPage
 			toc={page.data.toc}
 			full={page.data.full}
-			lastUpdate={time ?? undefined}
 			tableOfContent={{ style: 'clerk' }}
 		>
 			<DocsTitle>{page.data.title}</DocsTitle>
@@ -57,6 +98,9 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 					})}
 				/>
 			</DocsBody>
+
+			{/* Кастомный компонент даты - отображается только если есть дата */}
+			{time && <CustomLastUpdate date={time} />}
 		</DocsPage>
 	)
 }
