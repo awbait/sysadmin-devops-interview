@@ -48,7 +48,7 @@ function CustomLastUpdate({ date }: { date: Date }) {
 
 	return (
 		<p className='text-sm text-fd-muted-foreground'>
-			Последнее обновление {formatDate(date)}
+			Последнее обновление: {formatDate(date)}
 		</p>
 	)
 }
@@ -65,7 +65,6 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 		repo: 'sysadmin-devops-interview',
 		path: `content/docs/${page.path}`,
 	})
-	console.log(time)
 
 	return (
 		<DocsPage

@@ -1,0 +1,45 @@
+---
+title: Web servers (new)
+icon: SiNginx
+---
+## Теоретические вопросы
+
+## Практические вопросы
+
+### Как в Nginx заблокировать запросы вида `GET /?[a-z]{16} HTTP/1.1`
+
+В `location` регуляркой можно проверять только путь, а query string (`?…`) там не учитывается. Поэтому блокируем через переменную `$args` (она содержит строку после `?`).
+
+Используем `map` для фильтрации аргументов и возвращаем `403`:
+
+```
+# В http{}:
+map $args $block_16_lower {
+    default        0;
+    ~*^[a-z]{16}$  1;   # ровно 16 строчных букв
+}
+
+# В server{}:
+server {
+    listen 80;
+    server_name example.com;
+
+    location = / {
+        if ($block_16_lower) {
+            return 403;
+        }
+
+        # обычная обработка
+    }
+}
+```
+
+Пример проверки:
+
+```bash
+# Заблокированный запрос (403):
+curl -i "http://example.com/?abcdefghijklmnop"
+
+# Разрешённый запрос (200):
+curl -i "http://example.com/?abc=def"
+```
